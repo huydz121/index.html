@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng 20/10 - Vân Bé Iu Của Anh (Fixed Start)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #fce4ec; 
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: pointer;
+        }
+
+        .mobile-screen {
+            width: 100%;
+            max-width: 400px; 
+            height: 100vh; 
+            background-color: #fff8f8;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 35px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.1s;
+            border-radius: 25px;
+        }
+
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 35px;
+            background-color: rgba(255, 255, 255, 0.4); 
+            color: #333;
+            font-size: 0.85em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            box-sizing: border-box;
+            z-index: 100;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+        }
+        .status-bar span:first-child { font-weight: bold; }
+        .status-bar span:last-child { 
+            font-size: 0.9em; 
+            color: #555;
+        }
+
+        .text-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.2em;
+            font-weight: 800;
+            color: #d81b60;
+            text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            text-align: center;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            z-index: 50;
+            line-height: 1.3;
+        }
+        .text-overlay.small {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #00897b; 
+            background: rgba(232, 245, 251, 0.9);
+            border-radius: 10px;
+            padding: 6px 15px;
+        }
+        .stagger-text span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(25px) scale(0.8);
+        }
+
+        /* Khung ảnh Polaroid */
+        .photo-frame {
+            position: absolute;
+            background-color: #fff;
+            border: 5px solid #ffccdd; 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 20;
+            padding-bottom: 20px; 
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .photo-frame img {
+            max-width: 100%;
+            max-height: calc(100% - 20px); 
+            object-fit: cover;
+            display: block;
+            border-radius: 8px; 
+        }
+
+        /* Nút Play */
+        #playButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 18px 40px;
+            font-size: 1.3em;
+            background-image: linear-gradient(45deg, #ff4d94, #ff8cbe); 
+            color: white;
+            border: none;
+            border-radius: 35px;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        /* Hiệu ứng hạt rơi */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none; 
+            z-index: 99;
+        }
+        .particle.heart {
+            background-color: transparent;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: rotate(-45deg);
+        }
+        .particle.heart::before,
+        .particle.heart::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #ffb3c1;
+            border-radius: 50%;
+        }
+        .particle.heart::before { left: -50%; }
+        .particle.heart::after { top: -50%; }
+
+        /* Lời chúc phụ */
+        #wish-1, #wish-2, #wish-3, #wish-4 {
+            font-size: 1.2em;
+            padding: 5px 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 5px;
+            font-weight: 600;
+            z-index: 60;
+            color: #d81b60;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="mobile-screen" id="mobileScreen">
+        <div class="status-bar">
+            <span>20/10</span>
+            <span>❤️ Yêu Em Vân ❤️</span>
+        </div>
+
+        <button id="playButton">▶️ Gửi tặng Vân bé iu</button>
+
+        
+        <div id="greeting-1" class="text-overlay" style="font-size: 2.5em; color: #ff3d00;">Chúc Mừng Ngày 20/10</div>
+        <div id="greeting-2" class="text-overlay small" style="top: 25%; font-size: 2em; color: #8e24aa;">Vân bé iu của anh!</div>
+        <div id="greeting-3" class="text-overlay" style="font-size: 2.2em; color: #00897b;">Luôn xinh đẹp, rạng rỡ</div>
+        
+        <div id="lyric-1" class="text-overlay stagger-text" style="top: 50%; font-size: 2.8em; color: #c2185b; background: none; text-shadow: 1px 1px 3px rgba(255,255,255,0.7);">
+            <span>N</span><span>h</span><span>ớ</span> <span>n</span><span>ụ</span> <span>c</span><span>ư</span><span>ờ</span><span>i</span> <span>e</span><span>m</span>
+        </div>
+        <div id="lyric-2" class="text-overlay stagger-text" style="top: 65%; font-size: 2.5em; color: #00796b; background: none; text-shadow: 1px 1px 3px rgba(255,255,255,0.7);">
+            <span>N</span><span>h</span><span>ớ</span> <span>á</span><span>n</span><span>h</span> <span>m</span><span>ắ</span><span>t</span> <span>e</span><span>m</span>
+        </div>
+        
+        <div id="wish-1" class="text-overlay" style="top: 10%; left: 50%; transform: translate(-50%, -50%);">Bông hoa đẹp nhất!</div>
+        <div id="wish-2" class="text-overlay" style="top: 85%; left: 20%; transform: translate(-50%, -50%); color: #303f9f;">Yêu em nhất!</div>
+        <div id="wish-3" class="text-overlay" style="top: 20%; left: 80%; transform: translate(-50%, -50%); color: #008080;">Mãi mãi bên nhau.</div>
+        <div id="wish-4" class="text-overlay" style="top: 75%; left: 50%; transform: translate(-50%, -50%); color: #d32f2f;">My everything!</div>
+
+        <div id="final-message" class="text-overlay" style="font-size: 2.5em; color: #f50057; background: rgba(255,255,255,0.95); border: 2px solid #f50057;">
+            Happy Women's Day Vân! <br> Mãi là bé iu của anh!
+        </div>
+
+        <div id="photo-container"></div>
+        
+    </div>
+
+    <audio id="myAudio" src="BeIuCuaAnh.mp3" preload="auto"></audio> 
+
+    <script>
+        const audio = document.getElementById('myAudio');
+        const playButton = document.getElementById('playButton');
+        const mobileScreen = document.getElementById('mobileScreen');
+        const photoContainer = document.getElementById('photo-container');
+        const tl = gsap.timeline({ paused: true });
+
+        // Danh sách các URL ảnh (giữ nguyên)
+        const imageUrls = [
+            "https://sf-static.upanhlaylink.com/img/image_2025101974c774831cf01f3d343f5e8bbe09efe7.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019bd3fff04a55e84c5729a68ca01b5a8a1.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_2025101930e5050b73e12dd74008193e1674f1f2.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_2025101968c523d1d3e378ff7a00ec374350a9fa.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_202510198e75658d5ff5ca089dbfbb998dd66295.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_202510199fa9b273e2bac96c885e90c3b2c9dcde.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019211a3960c1ea38d22914e3dd364e94b5.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_2025101966d9943cf38572f24d2e5482d2d5f394.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_202510191071cd004b3fe60d5e625c971a7f8ef3.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019c8e624ce0eacccd258185a234ca781f5.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_202510194e1c48df330427758f4ee239f351a61f.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019cee8f09724f76d7256e89ea94c9bcc87.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_2025101989a2459237e1bf653b96c6874786e288.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019ae69eda292e171f9c63d3b9d1c3dda45.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019f3514e8be3ccfe985f0af1c8ab27bf99.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019ae6153075af297aecbdece0b814e9ed2.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019a205656e4a763321a9d1efc98a663a65.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_202510194e6868ff16fdb9780821b133f8dbf5c4.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019c4a979611ce923753bf32037ea5bfd08.jpg"
+        ];
+        let currentPhotoIndex = 0;
+
+        // Hàm tạo ảnh
+        function createPhotoFrame(url) {
+            const frame = document.createElement('div');
+            frame.className = 'photo-frame';
+            const size = gsap.utils.random(140, 190);
+            frame.style.width = `${size}px`; 
+            frame.style.height = `${size + 40}px`;
+            frame.style.top = `${gsap.utils.random(25, 65)}%`; 
+            frame.style.left = `${gsap.utils.random(25, 75)}%`;
+            frame.style.transform = `translate(-50%, -50%) rotate(${gsap.utils.random(-15, 15)}deg) scale(0)`;
+            
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = "Ảnh kỉ niệm";
+            frame.appendChild(img);
+            photoContainer.appendChild(frame);
+            return frame;
+        }
+
+        // Hàm tạo hạt rơi
+        function createParticle(type = 'circle') {
+            const particle = document.createElement('div');
+            particle.className = `particle ${type}`;
+            mobileScreen.appendChild(particle);
+            
+            const size = gsap.utils.random(5, 15);
+            gsap.set(particle, {
+                width: size,
+                height: size,
+                x: gsap.utils.random(0, mobileScreen.offsetWidth),
+                y: gsap.utils.random(-20, -5), 
+                opacity: 0
+            });
+            return particle;
+        }
+
+        // Hàm bắt đầu mưa hạt
+        function startParticleRain(duration, delay = 0, type = 'circle') {
+            let particles = [];
+            for (let i = 0; i < 20; i++) { 
+                particles.push(createParticle(type));
+            }
+            
+            gsap.to(particles, {
+                opacity: 1,
+                y: mobileScreen.offsetHeight + 50, 
+                x: function() { return this.x + gsap.utils.random(-50, 50); }, 
+                rotation: function() { return gsap.utils.random(0, 360); }, 
+                scale: function() { return gsap.utils.random(0.5, 1.5); },
+                duration: gsap.utils.random(2.5, 5), 
+                ease: "power1.in",
+                stagger: {
+                    each: 0.08, 
+                    repeat: -1, 
+                    from: "random",
+                },
+                delay: delay,
+                onComplete: function() {
+                    gsap.set(this.targets(), {
+                        x: function() { return gsap.utils.random(0, mobileScreen.offsetWidth); },
+                        y: gsap.utils.random(-20, -5),
+                        opacity: 0,
+                        rotation: 0,
+                        scale: 1
+                    });
+                }
+            });
+            // Giữ cho mưa hạt chạy trong thời gian đã định
+            setTimeout(() => {
+                gsap.killTweensOf(particles);
+                gsap.to(particles, { opacity: 0, duration: 0.5, onComplete: () => particles.forEach(p => p.remove()) });
+            }, duration * 1000);
+        }
+
+        // Hàm reset
+        function resetElements() {
+            gsap.set(["#greeting-1", "#greeting-2", "#greeting-3", "#wish-1", "#wish-2", "#wish-3", "#wish-4", "#final-message"], { opacity: 0, scale: 1, y: 0, x: 0, rotation: 0 });
+            gsap.set("#lyric-1 span, #lyric-2 span", { opacity: 0, y: 25, scale: 0.8, rotation: 0 });
+            gsap.set(mobileScreen, { backgroundColor: "#fff8f8" });
+            photoContainer.innerHTML = ''; 
+            currentPhotoIndex = 0; 
+            gsap.killTweensOf(".particle"); 
+            document.querySelectorAll('.particle').forEach(p => p.remove());
+        }
+
+        // ==========================================================
+        // --- GSAP Timeline TĂNG TỐC TỐI ĐA (2.5s/ảnh) ---
+        // ==========================================================
+
+        // 0.0s - 13.0s: Intro
+        tl.addLabel("start", 0)
+        .fromTo("#greeting-1", { y: -50, opacity: 0, scale: 0.8 }, { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.7)" }, "start+=0.5")
+        .fromTo("#greeting-2", { x: 100, opacity: 0, rotation: 10 }, { x: 0, opacity: 1, rotation: 0, duration: 0.6, ease: "power2.out" }, "start+=1.0")
+        .to(mobileScreen, { backgroundColor: "#fcf4f7", duration: 0.1, yoyo: true, repeat: 1 }, "start+=1.5")
+        .to(["#greeting-1", "#greeting-2"], { opacity: 0, y: -20, duration: 0.4 }, "start+=2.5")
+
+        // 3.0s - 5.5s: Câu chúc đầu tiên
+        .addLabel("firstGreeting", 3.0)
+        .fromTo("#greeting-3", { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }, "firstGreeting")
+        .call(startParticleRain, [4, 0, 'heart'], "firstGreeting+=0.2") 
+        .to(mobileScreen, { backgroundColor: "#ffe6f0", duration: 0.1, yoyo: true, repeat: 1 }, "firstGreeting+=0.8")
+        .to("#greeting-3", { opacity: 0, y: -20, duration: 0.4 }, "firstGreeting+=2.0")
+
+        // 6.0s - 13.0s: Lyric
+        .addLabel("lyricOne", 6.0)
+        .fromTo("#lyric-1 span", { y: 30, opacity: 0, scale: 0.7, rotation: gsap.utils.random(-15, 15) }, 
+                 { y: 0, opacity: 1, scale: 1, rotation: 0, duration: 0.05, stagger: 0.05, ease: "back.out(2)" }, "lyricOne")
+        .to(mobileScreen, { backgroundColor: "#f8e0e7", duration: 0.1, yoyo: true, repeat: 1 }, "lyricOne+=0.8")
+
+        .addLabel("lyricTwo", 9.0) 
+        .fromTo("#lyric-2 span", { y: 30, opacity: 0, scale: 0.7, rotation: gsap.utils.random(-15, 15) }, 
+                 { y: 0, opacity: 1, scale: 1, rotation: 0, duration: 0.05, stagger: 0.05, ease: "back.out(2)" }, "lyricTwo")
+        .to(mobileScreen, { backgroundColor: "#fae7ed", duration: 0.1, yoyo: true, repeat: 1 }, "lyricTwo+=0.8")
+        .to(["#lyric-1 span", "#lyric-2 span"], { opacity: 0, y: -20, duration: 0.3, stagger: 0.01 }, "lyricTwo+=2.5")
+
+
+        // Vòng lặp ảnh và lời chúc (2.5s/ảnh)
+        const photoDisplayDuration = 2.5; 
+        const startPhotoTime = 13.0; 
+
+        const wishAnimations = [
+            { id: "#wish-1", from: { y: -50, opacity: 0 }, to: { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" } },
+            { id: "#wish-2", from: { x: -50, opacity: 0 }, to: { x: 0, opacity: 1, duration: 0.3, ease: "power2.out" } },
+            { id: "#wish-3", from: { scale: 0.5, opacity: 0 }, to: { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(1.7)" } },
+            { id: "#wish-4", from: { rotation: 30, opacity: 0 }, to: { rotation: 0, opacity: 1, duration: 0.3, ease: "power2.out" } }
+        ];
+
+        imageUrls.forEach((url, index) => {
+            const startTime = startPhotoTime + (index * photoDisplayDuration);
+            
+            tl.addLabel(`photo-${index}`, startTime);
+
+            // Ẩn ảnh cũ (TỐC ĐỘ RẤT NHANH)
+            if (index > 0) {
+                tl.to(`#photo-container div:nth-child(${index})`, { 
+                    opacity: 0, 
+                    scale: 0.5, 
+                    duration: 0.3, 
+                    ease: "power1.in",
+                    onComplete: function() { this.targets()[0].remove(); }
+                }, `photo-${index}-=0.3`); 
+            }
+
+            // Tạo và hiển thị ảnh mới (TỐC ĐỘ RẤT NHANH)
+            tl.call(function() { 
+                const newPhoto = createPhotoFrame(url);
+                gsap.fromTo(newPhoto, 
+                    { scale: 0, rotation: gsap.utils.random(-60, 60), opacity: 0.5 }, 
+                    { scale: 1, rotation: gsap.utils.random(-10, 10), opacity: 1, duration: 0.6, ease: "elastic.out(1, 0.7)" } 
+                );
+            }, [], `photo-${index}`)
+            
+            // Hiệu ứng nháy màn hình (Beat)
+            .to(mobileScreen, { backgroundColor: "#fef0f4", duration: 0.05, yoyo: true, repeat: 1 }, `photo-${index}+=0.3`)
+            .to(`#photo-container div:last-child`, { rotation: "+=5", yoyo: true, repeat: 1, duration: 0.1 }, `photo-${index}+=0.3`) 
+
+            .to(mobileScreen, { backgroundColor: "#fef0f4", duration: 0.05, yoyo: true, repeat: 1 }, `photo-${index}+=1.5`)
+            .to(`#photo-container div:last-child`, { rotation: "-=5", yoyo: true, repeat: 1, duration: 0.1 }, `photo-${index}+=1.5`); 
+
+
+            // Hiển thị lời chúc phụ (Xuất hiện liên tục)
+            const wishData = wishAnimations[index % wishAnimations.length];
+            const messageTime = startTime + photoDisplayDuration * 0.4; 
+
+            // Hiển thị
+            tl.fromTo(wishData.id, wishData.from, wishData.to, messageTime) 
+            // Ẩn
+              .to(wishData.id, { opacity: 0, duration: 0.2, delay: 1.0 }, messageTime); 
+        });
+
+        // Kết thúc với lời chúc cuối cùng
+        const totalPhotoTime = imageUrls.length * photoDisplayDuration; 
+        const finalMessageTime = startPhotoTime + totalPhotoTime + 1.0; 
+
+        tl.addLabel("finalMessage", finalMessageTime); 
+        tl.to(".photo-frame", { opacity: 0, y: -50, duration: 0.5, stagger: 0.03, ease: "power1.in" }, "finalMessage-=0.5")
+          .to(mobileScreen, { backgroundColor: "#fff0f5", duration: 0.2 }, "finalMessage")
+          .fromTo("#final-message", { scale: 0.5, opacity: 0, rotation: -10 }, { scale: 1, opacity: 1, rotation: 0, duration: 0.8, ease: "elastic.out(1, 0.5)" }, "finalMessage+=0.2") 
+          .call(startParticleRain, [10, 0, 'heart'], "finalMessage+=0.8") 
+          .to("#final-message", { y: -10, yoyo: true, repeat: -1, duration: 0.6, ease: "power1.inOut" }, "finalMessage+=1.5");
+
+
+        // ==========================================================
+        // --- LOGIC FIX LỖI KHÔNG CHẠY KHI NHẤN NÚT ---
+        // ==========================================================
+        playButton.addEventListener('click', () => {
+            playButton.style.display = 'none';
+            
+            // 1. Thử phát nhạc.
+            // Trình duyệt sẽ yêu cầu một hành động của người dùng (nhấn nút) để phát nhạc, 
+            // nên dòng này sẽ thành công.
+            const playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // Nhạc phát thành công, chạy timeline đồng bộ
+                    tl.play();
+                }).catch(error => {
+                    // Nếu lỗi (ví dụ: file nhạc không tìm thấy), vẫn chạy timeline
+                    console.warn("Lỗi phát nhạc, nhưng vẫn chạy hiệu ứng.");
+                    tl.play(); 
+                });
+            } else {
+                // Trường hợp dự phòng cho trình duyệt cũ: chạy timeline ngay
+                tl.play();
+            }
+
+            // Logic reset: Dù là nhạc kết thúc hay timeline kết thúc, đều reset lại
+            audio.onended = () => {
+                tl.pause(0); 
+                playButton.style.display = 'block'; 
+                resetElements(); 
+            };
+            
+            tl.eventCallback("onComplete", function() {
+                // Nếu timeline kết thúc trước khi nhạc (nhạc quá dài), 
+                // chúng ta sẽ tua nhạc về đầu và reset
+                if (!audio.paused && !audio.ended) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+                tl.pause(0); 
+                playButton.style.display = 'block'; 
+                resetElements(); 
+            });
+        });
+
+        // Đảm bảo reset trạng thái khi tải trang lần đầu
+        resetElements();
+
+    </script>
+</body>
+</html>
+
