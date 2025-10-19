@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng 20/10 - Vân Bé Iu Của Anh (18 Wishes & Max Speed)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #fce4ec; 
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: pointer;
+        }
+
+        .mobile-screen {
+            width: 100%;
+            max-width: 400px; 
+            height: 100vh; 
+            background-color: #fff8f8;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 35px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.1s;
+            border-radius: 25px;
+        }
+
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 35px;
+            background-color: rgba(255, 255, 255, 0.4); 
+            color: #333;
+            font-size: 0.85em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            box-sizing: border-box;
+            z-index: 100;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+        }
+        .status-bar span:first-child { font-weight: bold; }
+        .status-bar span:last-child { 
+            font-size: 0.9em; 
+            color: #555;
+        }
+
+        .text-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.2em;
+            font-weight: 800;
+            color: #d81b60;
+            text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            text-align: center;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            z-index: 50;
+            line-height: 1.3;
+        }
+        .text-overlay.small {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #00897b; 
+            background: rgba(232, 245, 251, 0.9);
+            border-radius: 10px;
+            padding: 6px 15px;
+        }
+        .stagger-text span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(25px) scale(0.8);
+        }
+
+        /* Khung ảnh Polaroid */
+        .photo-frame {
+            position: absolute;
+            background-color: #fff;
+            border: 5px solid #ffccdd; 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 20;
+            padding-bottom: 20px; 
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .photo-frame img {
+            max-width: 100%;
+            max-height: calc(100% - 20px); 
+            object-fit: cover;
+            display: block;
+            border-radius: 8px; 
+        }
+
+        /* Nút Play */
+        #playButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 18px 40px;
+            font-size: 1.3em;
+            background-image: linear-gradient(45deg, #ff4d94, #ff8cbe); 
+            color: white;
+            border: none;
+            border-radius: 35px;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        /* Hiệu ứng hạt rơi */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none; 
+            z-index: 99;
+        }
+        .particle.heart {
+            background-color: transparent;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: rotate(-45deg);
+        }
+        .particle.heart::before,
+        .particle.heart::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #ffb3c1;
+            border-radius: 50%;
+        }
+        .particle.heart::before { left: -50%; }
+        .particle.heart::after { top: -50%; }
+
+        /* Lời chúc phụ - Đã thay đổi CSS chung để chứa nhiều câu chúc hơn */
+        .wish-message {
+            position: absolute;
+            font-size: 1.2em;
+            padding: 5px 10px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            font-weight: 700;
+            z-index: 60;
+            color: #ff69b4; 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            white-space: nowrap; 
+            opacity: 0; /* Mặc định ẩn */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="mobile-screen" id="mobileScreen">
+        <div class="status-bar">
+            <span>20/10</span>
+            <span>❤️ Yêu Em Vân ❤️</span>
+        </div>
+
+        <button id="playButton">▶️ Gửi tặng Vân bé iu</button>
+
+        
+        <div id="greeting-1" class="text-overlay" style="font-size: 2.5em; color: #ff3d00;">Chúc Mừng Ngày 20/10</div>
+        <div id="greeting-2" class="text-overlay small" style="top: 25%; font-size: 2em; color: #8e24aa;">Vân bé iu của anh!</div>
+        <div id="greeting-3" class="text-overlay" style="font-size: 2.2em; color: #00897b;">Luôn xinh đẹp, rạng rỡ</div>
+        
+        <div id="lyric-1" class="text-overlay stagger-text" style="top: 50%; font-size: 2.8em; color: #c2185b; background: none; text-shadow: 1px 1px 3px rgba(255,255,255,0.7);">
+            <span>N</span><span>h</span><span>ớ</span> <span>n</span><span>ụ</span> <span>c</span><span>ư</span><span>ờ</span><span>i</span> <span>e</span><span>m</span>
+        </div>
+        <div id="lyric-2" class="text-overlay stagger-text" style="top: 65%; font-size: 2.5em; color: #00796b; background: none; text-shadow: 1px 1px 3px rgba(255,255,255,0.7);">
+            <span>N</span><span>h</span><span>ớ</span> <span>á</span><span>n</span><span>h</span> <span>m</span><span>ắ</span><span>t</span> <span>e</span><span>m</span>
+        </div>
+        
+        <div id="wish-01" class="wish-message" style="top: 10%; left: 50%;">Yêu em nhìu hơn cả trời sao!</div>
+        <div id="wish-02" class="wish-message" style="top: 85%; left: 20%;">Bé iu của anh mãi hạnh phúc nhé!</div>
+        <div id="wish-03" class="wish-message" style="top: 20%; left: 80%;">Chỉ cần em cười là anh vui rồi.</div>
+        <div id="wish-04" class="wish-message" style="top: 75%; left: 50%;">Món quà tuyệt vời nhất của anh!</div>
+        <div id="wish-05" class="wish-message" style="top: 30%; left: 15%;">Luôn là cô gái rạng rỡ nhất!</div>
+        <div id="wish-06" class="wish-message" style="top: 70%; left: 85%;">Anh sẽ mãi che chở cho em.</div>
+        <div id="wish-07" class="wish-message" style="top: 15%; left: 70%;">Cảm ơn em đã đến bên anh.</div>
+        <div id="wish-08" class="wish-message" style="top: 60%; left: 30%;">Vô điều kiện yêu em.</div>
+        <div id="wish-09" class="wish-message" style="top: 45%; left: 85%;">Nụ cười em là liều thuốc.</div>
+        <div id="wish-10" class="wish-message" style="top: 80%; left: 65%;">Anh sẽ làm tất cả vì em.</div>
+        <div id="wish-11" class="wish-message" style="top: 5%; left: 35%;">Em là mùa xuân của riêng anh.</div>
+        <div id="wish-12" class="wish-message" style="top: 90%; left: 40%;">Mãi mãi là cô công chúa nhỏ!</div>
+        <div id="wish-13" class="wish-message" style="top: 25%; left: 20%;">Ước gì thời gian ngừng lại!</div>
+        <div id="wish-14" class="wish-message" style="top: 55%; left: 10%;">Gửi ngàn nụ hôn đến em.</div>
+        <div id="wish-15" class="wish-message" style="top: 35%; left: 75%;">Mãi là Vân bé iu nhé!</div>
+        <div id="wish-16" class="wish-message" style="top: 65%; left: 50%;">Hạnh phúc giản đơn là có em.</div>
+        <div id="wish-17" class="wish-message" style="top: 50%; left: 25%;">Chỉ một mình em thôi.</div>
+        <div id="wish-18" class="wish-message" style="top: 40%; left: 60%;">Thương em rất nhìu, Vân!</div>
+        
+
+        <div id="final-message" class="text-overlay" style="font-size: 2.5em; color: #f50057; background: rgba(255,255,255,0.95); border: 2px solid #f50057;">
+            Happy Women's Day Vân! <br> Mãi là bé iu của anh!
+        </div>
+
+        <div id="photo-container"></div>
+        
+    </div>
+
+    <audio id="myAudio" src="BeIuCuaAnh.mp3" preload="auto"></audio> 
+
+    <script>
+        const audio = document.getElementById('myAudio');
+        const playButton = document.getElementById('playButton');
+        const mobileScreen = document.getElementById('mobileScreen');
+        const photoContainer = document.getElementById('photo-container');
+        const tl = gsap.timeline({ paused: true });
+
+        // Danh sách các URL ảnh (giữ nguyên 19 ảnh)
+        const imageUrls = [
+            "https://sf-static.upanhlaylink.com/img/image_2025101974c774831cf01f3d343f5e8bbe09efe7.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019bd3fff04a55e84c5729a68ca01b5a8a1.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_2025101930e5050b73e12dd74008193e1674f1f2.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_2025101968c523d1d3e378ff7a00ec374350a9fa.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_202510198e75658d5ff5ca089dbfbb998dd66295.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_202510199fa9b273e2bac96c885e90c3b2c9dcde.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019211a3960c1ea38d22914e3dd364e94b5.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_2025101966d9943cf38572f24d2e5482d2d5f394.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_202510191071cd004b3fe60d5e625c971a7f8ef3.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019c8e624ce0eacccd258185a234ca781f5.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_202510194e1c48df330427758f4ee239f351a61f.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019cee8f09724f76d7256e89ea94c9bcc87.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_2025101989a2459237e1bf653b96c6874786e288.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019ae69eda292e171f9c63d3b9d1c3dda45.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019f3514e8be3ccfe985f0af1c8ab27bf99.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019ae6153075af297aecbdece0b814e9ed2.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019a205656e4a763321a9d1efc98a663a65.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_202510194e6868ff16fdb9780821b133f8dbf5c4.jpg",
+            "https://sf-static.upanhlaylink.com/img/image_20251019c4a979611ce923753bf32037ea5bfd08.jpg"
+        ];
+        
+        // Danh sách các ID lời chúc đã được thêm vào DOM
+        const wishIDs = [
+            "#wish-01", "#wish-02", "#wish-03", "#wish-04", "#wish-05", "#wish-06",
+            "#wish-07", "#wish-08", "#wish-09", "#wish-10", "#wish-11", "#wish-12",
+            "#wish-13", "#wish-14", "#wish-15", "#wish-16", "#wish-17", "#wish-18"
+        ];
+
+        // Hàm tạo ảnh (Giữ nguyên)
+        function createPhotoFrame(url) {
+            const frame = document.createElement('div');
+            frame.className = 'photo-frame';
+            const size = gsap.utils.random(140, 190);
+            frame.style.width = `${size}px`; 
+            frame.style.height = `${size + 40}px`;
+            frame.style.top = `${gsap.utils.random(25, 65)}%`; 
+            frame.style.left = `${gsap.utils.random(25, 75)}%`;
+            frame.style.transform = `translate(-50%, -50%) rotate(${gsap.utils.random(-15, 15)}deg) scale(0)`;
+            
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = "Ảnh kỉ niệm";
+            frame.appendChild(img);
+            photoContainer.appendChild(frame);
+            return frame;
+        }
+
+        // Hàm tạo và dừng mưa hạt (Giữ nguyên)
+        function createParticle(type = 'circle') {
+            const particle = document.createElement('div');
+            particle.className = `particle ${type}`;
+            mobileScreen.appendChild(particle);
+            
+            const size = gsap.utils.random(5, 15);
+            gsap.set(particle, {
+                width: size,
+                height: size,
+                x: gsap.utils.random(0, mobileScreen.offsetWidth),
+                y: gsap.utils.random(-20, -5), 
+                opacity: 0
+            });
+            return particle;
+        }
+
+        function startParticleRain(duration, delay = 0, type = 'circle') {
+            let particles = [];
+            for (let i = 0; i < 20; i++) { 
+                particles.push(createParticle(type));
+            }
+            
+            gsap.to(particles, {
+                opacity: 1,
+                y: mobileScreen.offsetHeight + 50, 
+                x: function() { return this.x + gsap.utils.random(-50, 50); }, 
+                rotation: function() { return gsap.utils.random(0, 360); }, 
+                scale: function() { return gsap.utils.random(0.5, 1.5); },
+                duration: gsap.utils.random(2.5, 5), 
+                ease: "power1.in",
+                stagger: {
+                    each: 0.08, 
+                    repeat: -1, 
+                    from: "random",
+                },
+                delay: delay,
+            });
+            setTimeout(() => {
+                gsap.killTweensOf(particles);
+                gsap.to(particles, { opacity: 0, duration: 0.5, onComplete: () => particles.forEach(p => p.remove()) });
+            }, duration * 1000);
+        }
+
+        // Hàm reset (Đã cập nhật để bao gồm 18 wish)
+        function resetElements() {
+            gsap.set(["#greeting-1", "#greeting-2", "#greeting-3", "#final-message", ...wishIDs], { opacity: 0, scale: 1, y: 0, x: 0, rotation: 0 });
+            gsap.set("#lyric-1 span, #lyric-2 span", { opacity: 0, y: 25, scale: 0.8, rotation: 0 });
+            gsap.set(mobileScreen, { backgroundColor: "#fff8f8" });
+            photoContainer.innerHTML = ''; 
+            gsap.killTweensOf(".particle"); 
+            document.querySelectorAll('.particle').forEach(p => p.remove());
+        }
+
+        // ==========================================================
+        // --- LOGIC VÒNG LẶP CHUYỂN ẢNH VÀ CHÚC (MAX SPEED 2.5s) ---
+        // ==========================================================
+        
+        // Cấu hình animations cho 18 câu chúc (Đảm bảo độ đa dạng)
+        const allWishAnimations = [
+            { from: { y: -50, opacity: 0, rotation: 5 }, to: { y: 0, opacity: 1, rotation: 0, duration: 0.3, ease: "power2.out" } }, // Rơi xuống
+            { from: { x: -50, opacity: 0, scale: 0.7 }, to: { x: 0, opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.7)" } }, // Trượt vào từ trái
+            { from: { scale: 0.5, opacity: 0 }, to: { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(1.7)" } }, // Phóng to
+            { from: { rotation: 30, opacity: 0, y: 50 }, to: { rotation: 0, opacity: 1, y: 0, duration: 0.3, ease: "power2.out" } }, // Quay và bay lên
+            { from: { x: 50, opacity: 0, rotation: -10 }, to: { x: 0, opacity: 1, rotation: 0, duration: 0.3, ease: "power2.out" } }, // Trượt vào từ phải
+            { from: { scale: 1.5, opacity: 0, color: "#9c27b0" }, to: { scale: 1, opacity: 1, color: "#ff69b4", duration: 0.3, ease: "power2.out" } } // Đổi màu, phóng to
+        ];
+        
+        // Vòng lặp chính tạo timeline
+        const photoDisplayDuration = 2.5; 
+        const startPhotoTime = 13.0; 
+
+        imageUrls.forEach((url, index) => {
+            const startTime = startPhotoTime + (index * photoDisplayDuration);
+            const wishID = wishIDs[index % wishIDs.length]; // Lấy lần lượt các câu chúc
+            const wishAnimation = allWishAnimations[index % allWishAnimations.length]; // Lấy lần lượt các kiểu animation
+            
+            tl.addLabel(`photo-${index}`, startTime);
+
+            // Ẩn ảnh cũ (TỐC ĐỘ RẤT NHANH)
+            if (index > 0) {
+                tl.to(`#photo-container div:nth-child(${index})`, { 
+                    opacity: 0, scale: 0.5, duration: 0.3, ease: "power1.in",
+                    onComplete: function() { this.targets()[0].remove(); }
+                }, `photo-${index}-=0.3`); 
+            }
+
+            // Tạo và hiển thị ảnh mới (TỐC ĐỘ RẤT NHANH)
+            tl.call(function() { 
+                const newPhoto = createPhotoFrame(url);
+                gsap.fromTo(newPhoto, 
+                    { scale: 0, rotation: gsap.utils.random(-60, 60), opacity: 0.5 }, 
+                    { scale: 1, rotation: gsap.utils.random(-10, 10), opacity: 1, duration: 0.6, ease: "elastic.out(1, 0.7)" } 
+                );
+            }, [], `photo-${index}`)
+            
+            // Hiệu ứng nháy màn hình (Beat)
+            .to(mobileScreen, { backgroundColor: "#fef0f4", duration: 0.05, yoyo: true, repeat: 1 }, `photo-${index}+=0.3`)
+            .to(`#photo-container div:last-child`, { rotation: "+=5", yoyo: true, repeat: 1, duration: 0.1 }, `photo-${index}+=0.3`) 
+
+            .to(mobileScreen, { backgroundColor: "#fef0f4", duration: 0.05, yoyo: true, repeat: 1 }, `photo-${index}+=1.5`)
+            .to(`#photo-container div:last-child`, { rotation: "-=5", yoyo: true, repeat: 1, duration: 0.1 }, `photo-${index}+=1.5`); 
+
+
+            // Hiển thị lời chúc phụ (Xuất hiện liên tục, mỗi ảnh một lời chúc)
+            const messageTime = startTime + photoDisplayDuration * 0.4; 
+            const hideTime = messageTime + 1.0; 
+
+            // Hiển thị lời chúc (Dùng ID đã chọn và kiểu animation đã chọn)
+            tl.fromTo(wishID, wishAnimation.from, wishAnimation.to, messageTime) 
+            // Ẩn lời chúc 
+              .to(wishID, { opacity: 0, duration: 0.2 }, hideTime); 
+        });
+
+
+        // Kết thúc với lời chúc cuối cùng (Giữ nguyên)
+        const totalPhotoTime = imageUrls.length * photoDisplayDuration; 
+        const finalMessageTime = startPhotoTime + totalPhotoTime + 1.0; 
+
+        tl.addLabel("finalMessage", finalMessageTime); 
+        tl.to(".photo-frame", { opacity: 0, y: -50, duration: 0.5, stagger: 0.03, ease: "power1.in" }, "finalMessage-=0.5")
+          .to(mobileScreen, { backgroundColor: "#fff0f5", duration: 0.2 }, "finalMessage")
+          .fromTo("#final-message", { scale: 0.5, opacity: 0, rotation: -10 }, { scale: 1, opacity: 1, rotation: 0, duration: 0.8, ease: "elastic.out(1, 0.5)" }, "finalMessage+=0.2") 
+          .call(startParticleRain, [10, 0, 'heart'], "finalMessage+=0.8") 
+          .to("#final-message", { y: -10, yoyo: true, repeat: -1, duration: 0.6, ease: "power1.inOut" }, "finalMessage+=1.5");
+
+
+        // ==========================================================
+        // --- LOGIC KHỞI ĐỘNG CHẮC CHẮN HOẠT ĐỘNG (FIX LỖI) ---
+        // ==========================================================
+        playButton.addEventListener('click', () => {
+            playButton.style.display = 'none';
+            
+            // 1. Thử phát nhạc 
+            const playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    tl.play();
+                }).catch(error => {
+  
